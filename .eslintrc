@@ -1,0 +1,11 @@
+{
+  "root": true,
+  "env": {
+      "node": true
+  },
+  "extends": "@edify/eslint-config-node",
+  "rules": {
+    "no-use-before-define": ["error", { "functions": false, "classes": true }],
+    "no-param-reassign": [2, { "props": false }]
+  }
+}

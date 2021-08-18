@@ -1,0 +1,44 @@
+{
+  "name": "dna-connect",
+  "version": "0.0.1",
+  "description": "DNA Connector",
+  "main": "index.js",
+  "scripts": {
+    "start": "node -r dotenv/config ./dist/index.js",
+    "build": "babel src --out-dir dist",
+    "dev": "nodemon -r dotenv/config --ignore dist/ --ignore test/ --exec babel-node ./src/index.js",
+    "docker-build": "docker build -t dna-connector ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.edifylabs.net/edify/dna-connector.git"
+  },
+  "author": "Edify Labs",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/runtime": "^7.10.2",
+    "axios": "^0.21.1",
+    "cookie-parser": "^1.4.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "http-status-codes": "^1.4.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
+    "@babel/plugin-transform-runtime": "^7.10.1",
+    "@babel/preset-env": "^7.9.5",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^23.8.2",
+    "eslint-plugin-prettier": "^3.1.3",
+    "husky": "^4.2.5",
+    "jest": "^25.3.0",
+    "nodemon": "^2.0.3",
+    "prettier": "^2.0.4",
+    "supertest": "^4.0.2"
+  }
+}
