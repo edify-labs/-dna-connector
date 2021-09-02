@@ -1,10 +1,18 @@
-FROM node:14-alpine
+FROM alpine:3.14.2
+
+WORKDIR /code
+
+COPY entrypoint.sh /code/entrypoint.sh
+
+COPY dna-connector.json /code/dna-connector.json
+
+RUN apk add nodejs git npm \
+  && npm install -g pm2 \
+  && git clone https://github.com/edify-labs/dna-connector.git \
+  && cd dna-connector \
+  && npm install \
+  && npm run build
 
 WORKDIR /code/dna-connector
 
-COPY ./ /code/dna-connector
-
-RUN npm install \
-  && npm run build
-
-CMD npm run start
+ENTRYPOINT ["/code/entrypoint.sh"]

@@ -1,0 +1,6 @@
+{
+  "name" : "dna-connector",
+  "script" : "dist/index.js",
+  "cwd" : "/code/dna-connector",
+  "node_args" : "-r dotenv/config"
+}

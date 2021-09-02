@@ -1,29 +1,51 @@
 import axios from 'axios';
 import { errors, respond } from '../utils';
-import { config } from '../constants';
-import { getRequestFromTemplate } from '../functions';
+import { getConfig } from '../constants';
 
 export default async function query(req, res, next) {
   try {
-    const { request: dnaRequest } = req.body;
+    let { request: dnaRequest } = req.body;
 
     if (!dnaRequest) {
       throw new errors.UnprocessableError('request is required');
     }
 
-    const request = getRequestFromTemplate(dnaRequest);
+    const config = getConfig(req.url.includes('/sandbox'));
+    const mustaches = [
+      '{{dnaUserId}}',
+      '{{dnaPassword}}',
+      '{{dnaApplicationId}}',
+      '{{dnaNetworkNodeName}}',
+    ];
+
+    for (const mustache of mustaches) {
+      if (dnaRequest.includes(mustache) && config.vars[mustache]) {
+        dnaRequest = dnaRequest.replace(mustache, config.vars[mustache]);
+      }
+    }
+
     let response = {};
     try {
-      response = await axios({ ...config, data: request });
+      response = await axios({
+        url: config.url,
+        data: request,
+        headers: { 'Content-Type': 'application/xml' },
+        method: 'post',
+      });
     } catch (error) {
-      throw error.message?.includes('connectTimeout')
-        ? new errors.RequestTimeout('Unable to connect')
-        : new errors.InternalError(`Error executing request: ${error.message || dnaRequest}`);
+      const status = error.message?.includes('connectTimeout') ? 408 : 500;
+      return res.status(status).json({
+        message: 'Error executing request',
+        error: {
+          message: error.message,
+          stack: error.stack,
+        },
+        missingEnvKeys: config.missingKeys,
+      });
     }
 
     return respond.withOk(req, res, { response: response.data });
   } catch (error) {
-    console.log(error)
     return next(error);
   }
 }
