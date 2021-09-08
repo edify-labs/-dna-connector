@@ -23,7 +23,7 @@ export const getConfig = (isSandbox = false) => {
   }
 
   if (!url) {
-    missingKeys.push(isSandbox ? 'DNA_URL' : 'DNA_SANDBOX_URL');
+    missingKeys.push(isSandbox ? 'DNA_SANDBOX_URL' : 'DNA_URL');
   }
 
   return { url, vars, missingKeys };

@@ -28,7 +28,7 @@ export default async function query(req, res, next) {
     try {
       response = await axios({
         url: config.url,
-        data: request,
+        data: dnaRequest,
         headers: { 'Content-Type': 'application/xml' },
         method: 'post',
       });
