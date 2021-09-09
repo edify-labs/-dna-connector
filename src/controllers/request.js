@@ -1,3 +1,5 @@
+import fs from 'fs';
+import https from 'https';
 import axios from 'axios';
 import { errors, respond } from '../utils';
 import { getConfig } from '../constants';
@@ -24,14 +26,23 @@ export default async function query(req, res, next) {
       }
     }
 
+    const axiosConfig = {
+      url: config.url,
+      data: dnaRequest,
+      headers: { 'Content-Type': 'application/xml' },
+      method: 'post',
+    };
+
+    if (config.ca && config.cert) {
+      axiosConfig.httpsAgent = new https.Agent({
+        ca: fs.readFileSync(config.ca),
+        cert: fs.readFileSync(config.cert),
+      });
+    }
+
     let response = {};
     try {
-      response = await axios({
-        url: config.url,
-        data: dnaRequest,
-        headers: { 'Content-Type': 'application/xml' },
-        method: 'post',
-      });
+      response = await axios(axiosConfig);
     } catch (error) {
       const status = error.message?.includes('connectTimeout') ? 408 : 500;
       return res.status(status).json({

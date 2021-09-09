@@ -26,5 +26,27 @@ export const getConfig = (isSandbox = false) => {
     missingKeys.push(isSandbox ? 'DNA_SANDBOX_URL' : 'DNA_URL');
   }
 
-  return { url, vars, missingKeys };
+  const ca =
+    isSandbox && process.env.DNA_SANDBOX_INTERMEDIATE_CERT
+      ? process.env.DNA_SANDBOX_INTERMEDIATE_CERT
+      : process.env.DNA_INTERMEDIATE_CERT;
+  const cert =
+    isSandbox && process.env.DNA_SANDBOX_ROOT_CERT
+      ? process.env.DNA_SANDBOX_ROOT_CERT
+      : process.env.DNA_ROOT_CERT;
+
+  if (!ca) {
+    missingKeys.push(
+      isSandbox && process.env.DNA_SANDBOX_INTERMEDIATE_CERT
+        ? 'DNA_SANDBOX_INTERMEDIATE_CERT'
+        : 'DNA_INTERMEDIATE_CERT',
+    );
+  }
+
+  if (!cert) {
+    missingKeys.push(
+      isSandbox && process.env.DNA_SANDBOX_ROOT_CERT ? 'DNA_SANDBOX_ROOT_CERT' : 'DNA_ROOT_CERT',
+    );
+  }
+  return { url, vars, missingKeys, ca, cert };
 };
