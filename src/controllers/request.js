@@ -45,6 +45,7 @@ export default async function query(req, res, next) {
       response = await axios(axiosConfig);
     } catch (error) {
       const status = error.message?.includes('connectTimeout') ? 408 : 500;
+      const envKeys = Object.keys(process.env).filter((k) => k.includes('DNA_'));
       return res.status(status).json({
         message: 'Error executing request',
         error: {
@@ -52,8 +53,9 @@ export default async function query(req, res, next) {
           stack: error.stack,
         },
         missingEnvKeys: config.missingKeys,
-        ca: config.ca,
-        cert: config.cert,
+        ca: config.ca || 'missing',
+        cert: config.cert || 'missing',
+        dnaKeys: envKeys,
       });
     }
 
