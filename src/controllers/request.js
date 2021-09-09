@@ -52,6 +52,8 @@ export default async function query(req, res, next) {
           stack: error.stack,
         },
         missingEnvKeys: config.missingKeys,
+        ca: config.ca,
+        cert: config.cert,
       });
     }
 
