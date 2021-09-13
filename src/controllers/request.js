@@ -48,6 +48,7 @@ export default async function query(req, res, next) {
     try {
       response = await axios(axiosConfig);
     } catch (error) {
+      const eJSON = error.toJSON ? error.toJSON() : {};
       const status = error.message?.includes('connectTimeout') ? 408 : 500;
       const envKeys = Object.keys(process.env).filter((k) => k.includes('DNA_'));
       return res.status(status).json({
@@ -55,8 +56,10 @@ export default async function query(req, res, next) {
         error: {
           message: error.message,
           stack: error.stack,
+          jsonMessage: eJSON.message || error.message,
+          jsonStack: eJSON.stack || error.stack,
+          jsonCode: eJSON.code || 'no code',
         },
-        rawError: error.toJSON ? error.toJSON() : 'no toJSON method',
         missingEnvKeys: config.missingKeys,
         ca: config.ca || 'missing',
         cert: config.cert || 'missing',
