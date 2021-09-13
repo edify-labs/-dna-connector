@@ -1,9 +1,12 @@
 import fs from 'fs';
+import path from 'path';
 import https from 'https';
 import axios from 'axios';
 import { errors, respond } from '../utils';
 import { getConfig } from '../constants';
 
+const packagePath = path.join(`${__dirname}`, '..', '..', 'package.json');
+const pjson = require(packagePath);
 export default async function query(req, res, next) {
   try {
     let { request: dnaRequest } = req.body;
@@ -57,10 +60,11 @@ export default async function query(req, res, next) {
         ca: config.ca || 'missing',
         cert: config.cert || 'missing',
         dnaKeys: envKeys,
+        version: pjson.version,
       });
     }
 
-    return respond.withOk(req, res, { response: response.data });
+    return respond.withOk(req, res, { response: response.data, version: pjson.version });
   } catch (error) {
     return next(error);
   }
