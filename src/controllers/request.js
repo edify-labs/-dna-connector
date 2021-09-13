@@ -33,10 +33,11 @@ export default async function query(req, res, next) {
       method: 'post',
     };
 
+    const ca = fs.readFileSync(config.ca);
+    const cert = fs.readFileSync(config.cert);
     if (config.ca && config.cert) {
       axiosConfig.httpsAgent = new https.Agent({
-        ca: fs.readFileSync(config.ca),
-        cert: fs.readFileSync(config.cert),
+        ca: `${ca}\n${cert}`,
       });
     }
 
