@@ -56,6 +56,7 @@ export default async function query(req, res, next) {
           message: error.message,
           stack: error.stack,
         },
+        rawError: error.toJSON ? error.toJSON() : 'no toJSON method',
         missingEnvKeys: config.missingKeys,
         ca: config.ca || 'missing',
         cert: config.cert || 'missing',
