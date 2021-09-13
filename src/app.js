@@ -33,8 +33,8 @@ app.use((err, req, res, next) => {
     case 'NotFoundError':
       return respond.withNotFound(req, res, err.message);
     case 'InternalError': {
-      const message = err.isEdifyError ? err.message : null;
-      return respond.withInternalError(req, res, message);
+      // const message = err.isEdifyError ? err.message : null;
+      return respond.withInternalError(req, res, err.message);
     }
     case 'UnauthorizedError':
       return respond.withUnauthorized(req, res, err.message);
