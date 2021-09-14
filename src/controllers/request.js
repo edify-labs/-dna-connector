@@ -16,16 +16,16 @@ export default async function query(req, res, next) {
     }
 
     const config = getConfig(req.url.includes('/sandbox'));
-    const mustaches = [
-      '{{dnaUserId}}',
-      '{{dnaPassword}}',
-      '{{dnaApplicationId}}',
-      '{{dnaNetworkNodeName}}',
-    ];
+    const mustaches = {
+      '{{dnaUserId}}': 'dnaUserId',
+      '{{dnaPassword}}': 'dnaPassword',
+      '{{dnaApplicationId}}': 'dnaApplicationId',
+      '{{dnaNetworkNodeName}}': 'dnaNetworkNodeName',
+    };
 
-    for (const mustache of mustaches) {
-      if (dnaRequest.includes(mustache) && config.vars[mustache]) {
-        dnaRequest = dnaRequest.replace(mustache, config.vars[mustache]);
+    for (const [mustache, variable] of Object.entries(mustaches)) {
+      if (dnaRequest.includes(mustache) && config.vars[variable]) {
+        dnaRequest = dnaRequest.replace(mustache, config.vars[variable]);
       }
     }
 
