@@ -1,0 +1,3 @@
+{
+  "request": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?> <Transaction> <Input> <UserAuthentication> <UserId>{{dnaUserId}}</UserId> <Passwd>{{dnaPassword}}</Passwd> <ApplId>{{dnaApplicationId}}</ApplId> <NtwkNodeName>{{dnaNetworkNodeName}}</NtwkNodeName> </UserAuthentication> <Requests> <Request reqTypCd=\"7718\" /> </Requests> </Input> </Transaction>"
+}

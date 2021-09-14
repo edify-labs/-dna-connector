@@ -65,6 +65,7 @@ export default async function query(req, res, next) {
         cert: config.cert || 'missing',
         dnaKeys: envKeys,
         version: pjson.version,
+        sentData: dnaRequest,
       });
     }
 
