@@ -6,7 +6,7 @@ import { getConfig } from '../constants';
 
 export default async function ssoTokenRequest(isSandbox = false) {
   const date = new Date();
-  const xsd = `${date.toISOString()}${date.getTimezoneOffset() / 60}:00"`;
+  const xsd = `${date.toISOString()}${date.getTimezoneOffset() / 60}:00`;
   const trackingId = randomBytes(8).toString('hex');
   const config = getConfig(isSandbox);
 
