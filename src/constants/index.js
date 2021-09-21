@@ -4,11 +4,18 @@ export const getConfig = (isSandbox = false) => {
     url = process.env.DNA_SANDBOX_URL;
   }
 
+  let safUrl = process.env.DNA_SAF_URL;
+  if (isSandbox && process.env.DNA_SANDBOX_SAF_URL) {
+    safUrl = process.env.DNA_SANDBOX_SAF_URL;
+  }
+
   const keys = {
     DNA_USER_ID: 'dnaUserId',
     DNA_PASSWORD: 'dnaPassword',
     DNA_APPLICATION_ID: 'dnaApplicationId',
     DNA_NETWORK_NODE_NAME: 'dnaNetworkNodeName',
+    DNA_DEF_CODE: 'dnaDefCode',
+    DNA_ENVIRONMENT: 'dnaEnvironment',
   };
 
   const vars = {};
@@ -48,5 +55,6 @@ export const getConfig = (isSandbox = false) => {
       isSandbox && process.env.DNA_SANDBOX_ROOT_CERT ? 'DNA_SANDBOX_ROOT_CERT' : 'DNA_ROOT_CERT',
     );
   }
-  return { url, vars, missingKeys, ca, cert };
+
+  return { url, vars, missingKeys, ca, cert, safUrl };
 };
