@@ -20,11 +20,11 @@ export default async function ssoTokenRequest(isSandbox = false) {
   </DirectSSORequest>`;
   const data = createSoapRequest(xmlBody);
   const axiosConfig = {
-    url: config.safUrl,
+    url: `${config.safUrl}?wsdl`,
     data,
     headers: {
       'Content-Type': 'application/xml',
-      SOAPAction: `${config.safUrl}/DirectSignon`,
+      SOAPAction: `http://www.opensolutions.com/DirectSignon`,
     },
     method: 'post',
   };
