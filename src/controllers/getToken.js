@@ -11,7 +11,13 @@ export default async function getToken(req, res, next) {
     return res.json({ token });
   } catch (e) {
     const eJSON = e.toJSON ? e.toJSON() : {};
-    const status = e.message?.includes('connectTimeout') ? 408 : 500;
+    let status;
+    if (e?.response?.status) {
+      status = e.response.status;
+    } else {
+      status = e.message?.includes('connectTimeout') ? 408 : 500;
+    }
+
     return res.status(status).json({
       message: 'Error executing request',
       error: {
@@ -22,7 +28,10 @@ export default async function getToken(req, res, next) {
         jsonCode: eJSON.code || 'no code',
       },
       version: pjson.version,
-      requestConfig: eJSON && eJSON.config && eJSON.config.data ? eJSON.config.data : 'no data',
+      requestConfig:
+        eJSON && eJSON.config
+          ? { url: eJSON.config.url, headers: eJSON.config.headers, data: eJSON.config.data }
+          : {},
       responseData: e.response?.data || {},
     });
   }
