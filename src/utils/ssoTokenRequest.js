@@ -23,7 +23,7 @@ export default async function ssoTokenRequest(isSandbox = false) {
     url: config.safUrl,
     data,
     headers: {
-      'Content-Type': 'application/soap+xml',
+      'Content-Type': 'application/xml',
       SOAPAction: 'http://www.opensolutions.com/DirectSignon',
     },
     method: 'post',
