@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import https from 'https';
 import axios from 'axios';
-import { errors, respond, getSsoToken } from '../utils';
+import { errors, respond, getSsoToken, createSoapRequest } from '../utils';
 import { getConfig } from '../constants';
 
 const packagePath = path.join(`${__dirname}`, '..', '..', 'package.json');
@@ -58,9 +58,10 @@ export default async function query(req, res, next) {
       }
     }
 
+    const data = createSoapRequest(dnaRequest);
     const axiosConfig = {
       url: config.url,
-      data: dnaRequest,
+      data,
       headers: { 'Content-Type': 'application/xml' },
       method: 'post',
     };

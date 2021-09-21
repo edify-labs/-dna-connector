@@ -3,6 +3,7 @@ import axios from 'axios';
 import https from 'https';
 import { randomBytes } from 'crypto';
 import { getConfig } from '../constants';
+import createSoapRequest from './createSoapRequest';
 
 export default async function ssoTokenRequest(isSandbox = false) {
   const date = new Date();
@@ -10,18 +11,17 @@ export default async function ssoTokenRequest(isSandbox = false) {
   const trackingId = randomBytes(8).toString('hex');
   const config = getConfig(isSandbox);
 
-  const xmlBody = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}">
-      <DeviceId>edifyDnaConnector</DeviceId>
-      <UserId>${config.vars?.dnaUserId}</UserId>
-      <Password>${config.vars?.dnaPassword}</Password>
-      <ProdEnvCd>${config.vars?.dnaEnvironment}</ProdEnvCd>
-      <ProdDefCd>${config.vars?.dnaDefCode}</ProdDefCd>
-    </DirectSSORequest>`;
-
+  const xmlBody = `<DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}">
+    <DeviceId>edifyDnaConnector</DeviceId>
+    <UserId>${config.vars?.dnaUserId}</UserId>
+    <Password>${config.vars?.dnaPassword}</Password>
+    <ProdEnvCd>${config.vars?.dnaEnvironment}</ProdEnvCd>
+    <ProdDefCd>${config.vars?.dnaDefCode}</ProdDefCd>
+  </DirectSSORequest>`;
+  const data = createSoapRequest(xmlBody);
   const axiosConfig = {
     url: config.safUrl,
-    data: xmlBody,
+    data,
     headers: { 'Content-Type': 'application/xml' },
     method: 'post',
   };
