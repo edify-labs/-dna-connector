@@ -10,16 +10,14 @@ export default async function ssoTokenRequest(isSandbox = false) {
   const trackingId = randomBytes(8).toString('hex');
   const config = getConfig(isSandbox);
 
-  const xmlBody = `
-    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  const xmlBody = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}">
       <DeviceId>edifyDnaConnector</DeviceId>
       <UserId>${config.vars?.dnaUserId}</UserId>
       <Password>${config.vars?.dnaPassword}</Password>
       <ProdEnvCd>${config.vars?.dnaEnvironment}</ProdEnvCd>
       <ProdDefCd>${config.vars?.dnaDefCode}</ProdDefCd>
-    </DirectSSORequest>
-  `;
+    </DirectSSORequest>`;
 
   const axiosConfig = {
     url: config.safUrl,
