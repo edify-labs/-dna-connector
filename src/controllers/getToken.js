@@ -23,6 +23,7 @@ export default async function getToken(req, res, next) {
       },
       version: pjson.version,
       requestConfig: eJSON && eJSON.config && eJSON.config.data ? eJSON.config.data : 'no data',
+      responseData: e.response?.data || {},
     });
   }
 }

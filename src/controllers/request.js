@@ -34,6 +34,7 @@ export default async function query(req, res, next) {
         },
         version: pjson.version,
         requestConfig: eJSON && eJSON.config && eJSON.config.data ? eJSON.config.data : 'no data',
+        responseData: e.response?.data || {},
       });
     }
 
@@ -94,6 +95,7 @@ export default async function query(req, res, next) {
         dnaKeys: envKeys,
         version: pjson.version,
         sentData: dnaRequest,
+        responseData: e.response?.data || {},
       });
     }
 
