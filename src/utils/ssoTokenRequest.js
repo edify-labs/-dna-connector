@@ -22,7 +22,10 @@ export default async function ssoTokenRequest(isSandbox = false) {
   const axiosConfig = {
     url: config.safUrl,
     data,
-    headers: { 'Content-Type': 'application/xml', SOAPAction: 'DirectSignon' },
+    headers: {
+      'Content-Type': 'application/xml',
+      SOAPAction: 'http://www.opensolutions.com/DirectSignon',
+    },
     method: 'post',
   };
 
