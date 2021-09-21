@@ -22,7 +22,7 @@ export default async function ssoTokenRequest(isSandbox = false) {
   const axiosConfig = {
     url: config.safUrl,
     data,
-    headers: { 'Content-Type': 'application/xml' },
+    headers: { 'Content-Type': 'application/xml', SOAPAction: 'DirectSignon' },
     method: 'post',
   };
 
