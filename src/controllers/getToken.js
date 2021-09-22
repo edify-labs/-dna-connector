@@ -11,7 +11,7 @@ export default async function getToken(req, res, next) {
     return res.json({ token });
   } catch (e) {
     const eJSON = e.toJSON ? e.toJSON() : {};
-    const writeObj = eJSON;
+    const writeObj = eJSON && Object.keys(eJSON).length ? eJSON : e;
     if (e.response?.data) {
       writeObj.responseData = e.response.data;
     }
