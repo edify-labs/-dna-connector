@@ -18,6 +18,8 @@ export default async function getToken(req, res, next) {
     } else if (e.message && e.stack) {
       write = { message: e.message, stack: e.stack };
       write = JSON.stringify(write, null, 2);
+    } else if (typeof write === 'object' && Object.keys(write).length) {
+      write = JSON.stringify(write, null, 2);
     }
 
     writeToErrorFile(write);

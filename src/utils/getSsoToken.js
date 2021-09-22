@@ -11,13 +11,15 @@ export default async function getSsoToken(isSandbox = false) {
 
   const tokenResponse = await ssoTokenRequest(isSandbox);
   if (!tokenResponse || !tokenResponse.data) {
-    throw new Error('Error fetching token');
+    throw new Error('Error fetching token (no response data)');
   }
-
   const xmldoc = new DOMParser().parseFromString(tokenResponse.data);
   const [node] = xpath.select('//SSOTicket', xmldoc);
   if (!node || !node.firstChild || !node.firstChild.data) {
-    throw new Error('Error fetching token');
+    throw {
+      message: 'Error fetching token (xml data)',
+      responseData: tokenResponse.data,
+    };
   }
 
   existingToken = node.firstChild.data;

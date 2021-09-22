@@ -14,7 +14,7 @@ export default async function getWsdl(req, res, next) {
   try {
     response = await axios({
       method: 'get',
-      url: `${useUsrl}?wsdl`,
+      url: `${useUrl}?wsdl`,
     });
   } catch (e) {
     const eJSON = e.toJSON ? e.toJSON() : {};
