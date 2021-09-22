@@ -6,6 +6,7 @@ import { randomBytes } from 'crypto';
 import { DOMParser } from 'xmldom';
 import { getConfig } from '../constants';
 import createSoapRequest from './createSoapRequest';
+import { writeToErrorFile } from '.';
 
 let existingToken;
 
@@ -27,6 +28,17 @@ export default async function getSsoToken(isSandbox = false) {
   </DirectSSORequest>`;
 
   const data = createSoapRequest(xmlBody);
+  writeToErrorFile(
+    JSON.stringify(
+      {
+        data,
+        config,
+      },
+      null,
+      2,
+    ),
+  );
+
   const axiosConfig = {
     url: `${config.safUrl}`,
     data,
@@ -44,6 +56,7 @@ export default async function getSsoToken(isSandbox = false) {
       ca: `${ca}\n${cert}`,
     });
   }
+
   const tokenResponse = await axios(axiosConfig);
   if (!tokenResponse || !tokenResponse.data) {
     throw new Error('Error fetching token (no response data)');
@@ -54,7 +67,11 @@ export default async function getSsoToken(isSandbox = false) {
     throw {
       message: 'Error fetching token (xml data)',
       responseData: tokenResponse.data,
-      requestData: axiosConfig,
+      request: {
+        url: axiosConfig.url,
+        data: axiosConfig.data,
+        headers: axiosConfig.headers,
+      },
     };
   }
 
