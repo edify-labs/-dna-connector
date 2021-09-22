@@ -1,6 +1,11 @@
 import xpath from 'xpath';
+import fs from 'fs';
+import axios from 'axios';
+import https from 'https';
+import { randomBytes } from 'crypto';
 import { DOMParser } from 'xmldom';
-import ssoTokenRequest from './ssoTokenRequest';
+import { getConfig } from '../constants';
+import createSoapRequest from './createSoapRequest';
 
 let existingToken;
 
@@ -9,7 +14,37 @@ export default async function getSsoToken(isSandbox = false) {
     return existingToken;
   }
 
-  const tokenResponse = await ssoTokenRequest(isSandbox);
+  const date = new Date();
+  const xsd = `${date.toISOString()}${date.getTimezoneOffset() / 60}:00`;
+  const trackingId = randomBytes(8).toString('hex');
+  const config = getConfig(isSandbox);
+  const xmlBody = `<DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}">
+    <DeviceId>${config.vars?.dnaNetworkNodeName}</DeviceId>
+    <UserId>${config.vars?.dnaUserId}</UserId>
+    <Password>${config.vars?.dnaPassword}</Password>
+    <ProdEnvCd>${config.vars?.dnaEnvironment}</ProdEnvCd>
+    <ProdDefCd>${config.vars?.dnaDefCode}</ProdDefCd>
+  </DirectSSORequest>`;
+
+  const data = createSoapRequest(xmlBody);
+  const axiosConfig = {
+    url: `${config.safUrl}`,
+    data,
+    headers: {
+      'Content-Type': 'text/xml',
+      SOAPAction: `http://www.opensolutions.com/DirectSignon`,
+    },
+    method: 'post',
+  };
+
+  const ca = fs.readFileSync(config.ca);
+  const cert = fs.readFileSync(config.cert);
+  if (config.ca && config.cert) {
+    axiosConfig.httpsAgent = new https.Agent({
+      ca: `${ca}\n${cert}`,
+    });
+  }
+  const tokenResponse = await axios(axiosConfig);
   if (!tokenResponse || !tokenResponse.data) {
     throw new Error('Error fetching token (no response data)');
   }
@@ -19,6 +54,7 @@ export default async function getSsoToken(isSandbox = false) {
     throw {
       message: 'Error fetching token (xml data)',
       responseData: tokenResponse.data,
+      requestData: axiosConfig,
     };
   }
 
