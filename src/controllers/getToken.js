@@ -1,5 +1,5 @@
 import path from 'path';
-import { getSsoToken } from '../utils';
+import { getSsoToken, writeToErrorFile } from '../utils';
 
 const packagePath = path.join(`${__dirname}`, '..', '..', 'package.json');
 const pjson = require(packagePath);
@@ -11,6 +11,12 @@ export default async function getToken(req, res, next) {
     return res.json({ token });
   } catch (e) {
     const eJSON = e.toJSON ? e.toJSON() : {};
+    const writeObj = eJSON;
+    if (e.response?.data) {
+      writeObj.responseData = e.response.data;
+    }
+
+    writeToErrorFile(JSON.stringify(writeObj, null, 2));
     let status;
     if (e?.response?.status) {
       status = e.response.status;

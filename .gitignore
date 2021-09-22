@@ -69,3 +69,5 @@ typings/
 bulk_users1.ps1
 csvgen.js
 users.csv
+
+errors.txt

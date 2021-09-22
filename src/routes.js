@@ -1,6 +1,6 @@
 import express from 'express';
 // import { verifyAuthHeader } from './middleware';
-import { request, pullLatest, getToken, getWsdl } from './controllers';
+import { request, pullLatest, getToken, getWsdl, getErrorFile } from './controllers';
 
 const router = express.Router();
 
@@ -13,4 +13,6 @@ router.get('/token', getToken);
 router.get('/sandbox/token', getToken);
 router.get('/sandbox/wsdl/:service', getWsdl);
 router.get('/wsdl/:service', getWsdl);
+router.get('/errorFile', getErrorFile);
+
 export default router;
