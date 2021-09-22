@@ -11,12 +11,16 @@ export default async function getToken(req, res, next) {
     return res.json({ token });
   } catch (e) {
     const eJSON = e.toJSON ? e.toJSON() : {};
-    const writeObj = eJSON && Object.keys(eJSON).length ? eJSON : e;
-    if (e.response?.data) {
-      writeObj.responseData = e.response.data;
+    let write = eJSON && Object.keys(eJSON).length ? eJSON : e;
+    if (e.response?.data && Object.keys(write).length) {
+      write.responseData = e.response.data;
+      write = JSON.stringify(write, null, 2);
+    } else if (e.message && e.stack) {
+      write = { message: e.message, stack: e.stack };
+      write = JSON.stringify(write, null, 2);
     }
 
-    writeToErrorFile(JSON.stringify(writeObj, null, 2));
+    writeToErrorFile(write);
     let status;
     if (e?.response?.status) {
       status = e.response.status;
