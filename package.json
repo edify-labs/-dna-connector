@@ -1,6 +1,6 @@
 {
   "name": "dna-connect",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "DNA Connector",
   "main": "index.js",
   "scripts": {

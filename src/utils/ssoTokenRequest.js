@@ -12,7 +12,7 @@ export default async function ssoTokenRequest(isSandbox = false) {
   const config = getConfig(isSandbox);
 
   const xmlBody = `<DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}">
-    <DeviceId>edifyDnaConnector</DeviceId>
+    <DeviceId>${config.vars?.dnaNetworkNodeName}</DeviceId>
     <UserId>${config.vars?.dnaUserId}</UserId>
     <Password>${config.vars?.dnaPassword}</Password>
     <ProdEnvCd>${config.vars?.dnaEnvironment}</ProdEnvCd>
@@ -20,10 +20,10 @@ export default async function ssoTokenRequest(isSandbox = false) {
   </DirectSSORequest>`;
   const data = createSoapRequest(xmlBody);
   const axiosConfig = {
-    url: `${config.safUrl}?wsdl`,
+    url: `${config.safUrl}`,
     data,
     headers: {
-      'Content-Type': 'application/xml',
+      'Content-Type': 'text/xml',
       SOAPAction: `http://www.opensolutions.com/DirectSignon`,
     },
     method: 'post',
