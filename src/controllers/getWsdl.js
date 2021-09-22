@@ -1,4 +1,6 @@
+import fs from 'fs';
 import path from 'path';
+import https from 'https';
 import axios from 'axios';
 import { getConfig } from '../constants';
 
@@ -10,12 +12,21 @@ export default async function getWsdl(req, res, next) {
   const config = getConfig(req.url.includes('/sandbox'));
   let response;
   const useUrl = service === 'dna' ? config.url : config.safUrl;
+  const axiosConfig = {
+    method: 'get',
+    url: `${useUrl}?wsdl`,
+  };
+
+  const ca = fs.readFileSync(config.ca);
+  const cert = fs.readFileSync(config.cert);
+  if (config.ca && config.cert) {
+    axiosConfig.httpsAgent = new https.Agent({
+      ca: `${ca}\n${cert}`,
+    });
+  }
 
   try {
-    response = await axios({
-      method: 'get',
-      url: `${useUrl}?wsdl`,
-    });
+    response = await axios(axiosConfig);
   } catch (e) {
     const eJSON = e.toJSON ? e.toJSON() : {};
     let status;
