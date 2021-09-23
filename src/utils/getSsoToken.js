@@ -19,13 +19,17 @@ export default async function getSsoToken(isSandbox = false) {
   const xsd = `${date.toISOString()}${date.getTimezoneOffset() / 60}:00`;
   const trackingId = randomBytes(8).toString('hex');
   const config = getConfig(isSandbox);
-  const xmlBody = `<DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}">
-    <DeviceId>${config.vars?.dnaNetworkNodeName}</DeviceId>
-    <UserId>${config.vars?.dnaUserId}</UserId>
-    <Password>${config.vars?.dnaPassword}</Password>
-    <ProdEnvCd>${config.vars?.dnaEnvironment}</ProdEnvCd>
-    <ProdDefCd>${config.vars?.dnaDefCode}</ProdDefCd>
-  </DirectSSORequest>`;
+  const xmlBody = `<open:DirectSignon>
+    <open:xmlRequest>
+      <DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}">
+        <DeviceId>${config.vars?.dnaNetworkNodeName}</DeviceId>
+        <UserId>${config.vars?.dnaUserId}</UserId>
+        <Password>${config.vars?.dnaPassword}</Password>
+        <ProdEnvCd>${config.vars?.dnaEnvironment}</ProdEnvCd>
+        <ProdDefCd>${config.vars?.dnaDefCode}</ProdDefCd>
+      </DirectSSORequest>
+    </open:xmlRequest>
+  </open:DirectSignon>`;
 
   const data = createSoapRequest(xmlBody);
   writeToErrorFile(
