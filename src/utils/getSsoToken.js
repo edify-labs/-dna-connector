@@ -65,6 +65,7 @@ export default async function getSsoToken(isSandbox = false) {
   if (!tokenResponse || !tokenResponse.data) {
     throw new Error('Error fetching token (no response data)');
   }
+  console.log(tokenResponse.data);
   const xmldoc = new DOMParser().parseFromString(tokenResponse.data);
   const [node] = xpath.select('//SSOTicket', xmldoc);
   if (!node || !node.firstChild || !node.firstChild.data) {

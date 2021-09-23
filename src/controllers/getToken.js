@@ -10,6 +10,7 @@ export default async function getToken(req, res, next) {
     token = await getSsoToken(req.url.includes('/sandbox'));
     return res.json({ token });
   } catch (e) {
+    console.log(e);
     const eJSON = e.toJSON ? e.toJSON() : {};
     let write = eJSON && Object.keys(eJSON).length ? eJSON : e;
     if (e.response?.data && Object.keys(write).length) {
