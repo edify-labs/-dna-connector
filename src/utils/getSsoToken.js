@@ -21,13 +21,13 @@ export default async function getSsoToken(isSandbox = false) {
   const config = getConfig(isSandbox);
   const xmlBody = `<open:DirectSignon>
     <open:xmlRequest>
-      <DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}">
+      <![CDATA[<DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}">
         <DeviceId>${config.vars?.dnaNetworkNodeName}</DeviceId>
         <UserId>${config.vars?.dnaUserId}</UserId>
         <Password>${config.vars?.dnaPassword}</Password>
         <ProdEnvCd>${config.vars?.dnaEnvironment}</ProdEnvCd>
         <ProdDefCd>${config.vars?.dnaDefCode}</ProdDefCd>
-      </DirectSSORequest>
+      </DirectSSORequest>]]>
     </open:xmlRequest>
   </open:DirectSignon>`;
 
