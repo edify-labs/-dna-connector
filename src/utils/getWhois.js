@@ -1,3 +1,4 @@
+import moment from 'moment';
 import xpath from 'xpath';
 import fs from 'fs';
 import axios from 'axios';
@@ -15,8 +16,7 @@ export default async function getWhois(isSandbox = false) {
   }
 
   const ssoTicket = await getSsoTicket(isSandbox);
-  const date = new Date();
-  const xsd = `${date.toISOString()}${date.getTimezoneOffset() / 60}:00`;
+  const xsd = moment().format('YYYY-MM-DDTHH:mm:ss.SSSSSSSZ');
   const trackingId = randomBytes(8).toString('hex');
   const config = getConfig(isSandbox);
   console.log(`SSO TICKET\n------------------\n${ssoTicket}`);

@@ -1,3 +1,4 @@
+import moment from 'moment';
 import xpath from 'xpath';
 import fs from 'fs';
 import axios from 'axios';
@@ -8,8 +9,7 @@ import { getConfig } from '../constants';
 import { writeToErrorFile } from '.';
 
 export default async function getSsoTicket(isSandbox = false) {
-  const date = new Date();
-  const xsd = `${date.toISOString()}${date.getTimezoneOffset() / 60}:00`;
+  const xsd = moment().format('YYYY-MM-DDTHH:mm:ss.SSSSSSSZ');
   const trackingId = randomBytes(8).toString('hex');
   const config = getConfig(isSandbox);
   const xmlBody = `<?xml version="1.0" encoding="utf-8"?>
