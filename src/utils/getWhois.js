@@ -68,57 +68,57 @@ export default async function getWhois(isSandbox = false) {
   }
 
   console.log(tokenResponse.data);
-  const xmldoc = new DOMParser().parseFromString(str);
-  const select = xpath.useNamespaces({ soap: 'http://schemas.xmlsoap.org/soap/envelope/' });
-  const [envelope] = select('//soap:Envelope', xmldoc);
-  if (!envelope?.lastChild?.childNodes?.[0]?.firstChild?.childNodes?.[0]?.data) {
-    throw {
-      message: 'Error fetching token (xml data)',
-      responseData: tokenResponse.data,
-      request: {
-        url: axiosConfig.url,
-        data: axiosConfig.data,
-        headers: axiosConfig.headers,
-      },
-    };
-  }
+  // const xmldoc = new DOMParser().parseFromString(str);
+  // const select = xpath.useNamespaces({ soap: 'http://schemas.xmlsoap.org/soap/envelope/' });
+  // const [envelope] = select('//soap:Envelope', xmldoc);
+  // if (!envelope?.lastChild?.childNodes?.[0]?.firstChild?.childNodes?.[0]?.data) {
+  //   throw {
+  //     message: 'Error fetching token (xml data)',
+  //     responseData: tokenResponse.data,
+  //     request: {
+  //       url: axiosConfig.url,
+  //       data: axiosConfig.data,
+  //       headers: axiosConfig.headers,
+  //     },
+  //   };
+  // }
 
-  const ssoResponseDoc = new DOMParser().parseFromString(
-    envelope.lastChild.childNodes[0].firstChild.childNodes[0].data,
-  );
-  const [ssoTicket] = xpath.select('//SSOTicket', ssoResponseDoc);
-  if (!ssoTicket?.childNodes?.[0]?.data) {
-    throw {
-      message: 'Error fetching token (xml data)',
-      responseData: tokenResponse.data,
-      request: {
-        url: axiosConfig.url,
-        data: axiosConfig.data,
-        headers: axiosConfig.headers,
-      },
-    };
-  }
+  // const ssoResponseDoc = new DOMParser().parseFromString(
+  //   envelope.lastChild.childNodes[0].firstChild.childNodes[0].data,
+  // );
+  // const [ssoTicket] = xpath.select('//SSOTicket', ssoResponseDoc);
+  // if (!ssoTicket?.childNodes?.[0]?.data) {
+  //   throw {
+  //     message: 'Error fetching token (xml data)',
+  //     responseData: tokenResponse.data,
+  //     request: {
+  //       url: axiosConfig.url,
+  //       data: axiosConfig.data,
+  //       headers: axiosConfig.headers,
+  //     },
+  //   };
+  // }
 
-  const [node] = xpath.select('//SSOTicket', xmldoc);
-  if (!node || !node.firstChild || !node.firstChild.data) {
-    throw {
-      message: 'Error fetching token (xml data)',
-      responseData: tokenResponse.data,
-      request: {
-        url: axiosConfig.url,
-        data: axiosConfig.data,
-        headers: axiosConfig.headers,
-      },
-    };
-  }
+  // const [node] = xpath.select('//SSOTicket', xmldoc);
+  // if (!node || !node.firstChild || !node.firstChild.data) {
+  //   throw {
+  //     message: 'Error fetching token (xml data)',
+  //     responseData: tokenResponse.data,
+  //     request: {
+  //       url: axiosConfig.url,
+  //       data: axiosConfig.data,
+  //       headers: axiosConfig.headers,
+  //     },
+  //   };
+  // }
 
-  existingToken = node.firstChild.data;
+  // existingToken = node.firstChild.data;
 
-  // tokens last for 24h
-  // clear out after 23h for some leeway
-  setTimeout(() => {
-    existingToken = null;
-  }, 23 * 60 * 60 * 1000);
+  // // tokens last for 24h
+  // // clear out after 23h for some leeway
+  // setTimeout(() => {
+  //   existingToken = null;
+  // }, 23 * 60 * 60 * 1000);
 
-  return existingToken;
+  return 'end';
 }
