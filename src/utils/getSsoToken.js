@@ -19,24 +19,25 @@ export default async function getSsoToken(isSandbox = false) {
   const xsd = `${date.toISOString()}${date.getTimezoneOffset() / 60}:00`;
   const trackingId = randomBytes(8).toString('hex');
   const config = getConfig(isSandbox);
-  const xmlBody = `<?xml version="1.0" encoding="utf-8"?>
-  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:open="http://www.opensolutions.com/">
-    <soapenv:Header/>
-    <soapenv:Body>
-      <open:DirectSignon>
-        <open:xmlRequest>
-          <![CDATA[<DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}">
-            <DeviceId>${config.vars?.dnaNetworkNodeName}</DeviceId>
-            <UserId>${config.vars?.dnaUserId}</UserId>
-            <Password>${config.vars?.dnaPassword}</Password>
-            <ProdEnvCd>${config.vars?.dnaEnvironment}</ProdEnvCd>
-            <ProdDefCd>${config.vars?.dnaDefCode}</ProdDefCd>
-          </DirectSSORequest>]]>
-        </open:xmlRequest>
-    </open:DirectSignon>
-    </soapenv:Body>
-  </soapenv:Envelope>`;
+  // const xmlBody = `<?xml version="1.0" encoding="utf-8"?>
+  // <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:open="http://www.opensolutions.com/">
+  //   <soapenv:Header/>
+  //   <soapenv:Body>
+  //     <open:DirectSignon>
+  //       <open:xmlRequest>
+  //         <![CDATA[<DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}">
+  //           <DeviceId>${config.vars?.dnaNetworkNodeName}</DeviceId>
+  //           <UserId>${config.vars?.dnaUserId}</UserId>
+  //           <Password>${config.vars?.dnaPassword}</Password>
+  //           <ProdEnvCd>${config.vars?.dnaEnvironment}</ProdEnvCd>
+  //           <ProdDefCd>${config.vars?.dnaDefCode}</ProdDefCd>
+  //         </DirectSSORequest>]]>
+  //       </open:xmlRequest>
+  //   </open:DirectSignon>
+  //   </soapenv:Body>
+  // </soapenv:Envelope>`;
 
+  const xmlBody = `<?xml version="1.0" encoding="utf-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:open="http://www.opensolutions.com/"><soapenv:Header/><soapenv:Body><open:DirectSignon><open:xmlRequest><![CDATA[<DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}"><DeviceId>${config.vars?.dnaNetworkNodeName}</DeviceId><UserId>${config.vars?.dnaUserId}</UserId><Password>${config.vars?.dnaPassword}</Password><ProdEnvCd>${config.vars?.dnaEnvironment}</ProdEnvCd><ProdDefCd>${config.vars?.dnaDefCode}</ProdDefCd></DirectSSORequest>]]></open:xmlRequest></open:DirectSignon></soapenv:Body></soapenv:Envelope>`;
   writeToErrorFile(
     JSON.stringify(
       {
