@@ -1,5 +1,5 @@
 import path from 'path';
-import { getSsoToken, writeToErrorFile } from '../utils';
+import { getWhois, writeToErrorFile } from '../utils';
 
 const packagePath = path.join(`${__dirname}`, '..', '..', 'package.json');
 const pjson = require(packagePath);
@@ -7,7 +7,7 @@ const pjson = require(packagePath);
 export default async function getToken(req, res, next) {
   let token;
   try {
-    token = await getSsoToken(req.url.includes('/sandbox'));
+    token = await getWhois(req.url.includes('/sandbox'));
     return res.json({ token });
   } catch (e) {
     console.log(e);
