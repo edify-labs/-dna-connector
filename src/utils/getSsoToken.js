@@ -38,7 +38,23 @@ export default async function getSsoToken(isSandbox = false) {
   // </soapenv:Envelope>`;
 
   // const xmlBody = `<?xml version="1.0" encoding="utf-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:open="http://www.opensolutions.com/"><soapenv:Header/><soapenv:Body><open:DirectSignon><open:xmlRequest><![CDATA[<DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}"><DeviceId>${config.vars?.dnaNetworkNodeName}</DeviceId><UserId>${config.vars?.dnaUserId}</UserId><Password>${config.vars?.dnaPassword}</Password><ProdEnvCd>${config.vars?.dnaEnvironment}</ProdEnvCd><ProdDefCd>${config.vars?.dnaDefCode}</ProdDefCd></DirectSSORequest>]]></open:xmlRequest></open:DirectSignon></soapenv:Body></soapenv:Envelope>`;
-  const xmlBody = `<?xml version="1.0" encoding="utf-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:open="http://www.opensolutions.com/"><soapenv:Header/><soapenv:Body><open:DirectSignon><open:xmlRequest><DirectSSORequest MessageDateTime="${xsd}" TrackingId="${trackingId}"><DeviceId>${config.vars?.dnaNetworkNodeName}</DeviceId><UserId>${config.vars?.dnaUserId}</UserId><Password>${config.vars?.dnaPassword}</Password><ProdEnvCd>${config.vars?.dnaEnvironment}</ProdEnvCd><ProdDefCd>${config.vars?.dnaDefCode}</ProdDefCd></DirectSSORequest></open:xmlRequest></open:DirectSignon></soapenv:Body></soapenv:Envelope>`;
+  const xmlBody = `<?xml version="1.0" encoding="utf-8"?>
+  <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:open="http://www.opensolutions.com/">
+     <soapenv:Header/>
+     <soapenv:Body>
+        <open:DirectSignon>
+           <open:xmlRequest>
+              <![CDATA[<DirectSSORequest MessageDateTime="2021-09-28T09:12:07.3904460-05:00" TrackingId="79fdb34f-d7e2-4b6b-b2a1-9c93e8ece9e4">
+                  <DeviceId>${config.vars?.dnaNetworkNodeName?.trim()}</DeviceId>
+                  <UserId>${config.vars?.dnaUserId?.trim()}</UserId>
+                  <Password>${config.vars?.dnaPassword?.trim()}</Password>
+                  <ProdEnvCd>${config.vars?.dnaEnvironment?.trim()}</ProdEnvCd>
+                  <ProdDefCd>${config.vars?.dnaDefCode?.trim()}</ProdDefCd>
+              </DirectSSORequest>]]>
+           </open:xmlRequest>
+        </open:DirectSignon>
+     </soapenv:Body>
+  </soapenv:Envelope>`;
   writeToErrorFile(
     JSON.stringify(
       {

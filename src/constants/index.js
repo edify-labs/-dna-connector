@@ -24,9 +24,9 @@ export const getConfig = (isSandbox = false) => {
     const useKey = isSandbox ? key.replace('DNA_', 'DNA_SANDBOX_') : key;
     if (!process.env[useKey]) {
       missingKeys.push(useKey);
+    } else {
+      vars[prop] = process.env[useKey].trim();
     }
-
-    vars[prop] = process.env[useKey];
   }
 
   if (!url) {
