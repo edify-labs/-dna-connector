@@ -59,12 +59,13 @@ export default async function query(req, res, next) {
 
     let useData;
     let contentType = 'application/json';
+    let useUrl = config.urls.coreJson;
     if (requestJson) {
-      useData = requestJson;
-      useData = JSON.stringify(useData);
+      useData = JSON.stringify(requestJson);
     } else if (requestXml) {
       useData = requestXml;
       contentType = 'text/xml';
+      useUrl = config.urls.coreSoap;
     }
 
     console.log('pre mustache data', useData);
@@ -83,7 +84,7 @@ export default async function query(req, res, next) {
     }
 
     const axiosConfig = {
-      url: config.url,
+      url: useUrl,
       headers: { 'Content-Type': contentType },
       method: 'post',
       data: useData,
@@ -126,7 +127,7 @@ export default async function query(req, res, next) {
         cert: config.cert || 'missing',
         dnaKeys: envKeys,
         version: pjson.version,
-        sentData: dnaRequest,
+        sentData: useData,
         responseData: error.response?.data || {},
       });
     }

@@ -41,7 +41,7 @@ export default async function getSsoTicket(isSandbox = false) {
   );
 
   const axiosConfig = {
-    url: `${config.safUrl}`,
+    url: `${config.urls.saf}`,
     data: xmlBody,
     headers: {
       'Content-Type': 'text/xml',

@@ -1,12 +1,18 @@
 export const getConfig = (isSandbox = false) => {
-  let url = process.env.DNA_URL;
+  const urls = {};
+  urls.coreJson = process.env.DNA_URL_JSON;
   if (isSandbox) {
-    url = process.env.DNA_SANDBOX_URL;
+    urls.coreJson = process.env.DNA_SANDBOX_URL_JSON;
   }
 
-  let safUrl = process.env.DNA_SAF_URL;
+  urls.coreSoap = process.env.DNA_URL_SOAP;
+  if (isSandbox) {
+    urls.coreSoap = process.env.DNA_SANDBOX_URL_SOAP;
+  }
+
+  urls.saf = process.env.DNA_SAF_URL;
   if (isSandbox && process.env.DNA_SANDBOX_SAF_URL) {
-    safUrl = process.env.DNA_SANDBOX_SAF_URL;
+    urls.saf = process.env.DNA_SANDBOX_SAF_URL;
   }
 
   const keys = {
@@ -27,10 +33,6 @@ export const getConfig = (isSandbox = false) => {
     } else {
       vars[prop] = process.env[useKey].trim();
     }
-  }
-
-  if (!url) {
-    missingKeys.push(isSandbox ? 'DNA_SANDBOX_URL' : 'DNA_URL');
   }
 
   const ca =
@@ -56,5 +58,5 @@ export const getConfig = (isSandbox = false) => {
     );
   }
 
-  return { url, vars, missingKeys, ca, cert, safUrl };
+  return { urls, vars, missingKeys, ca, cert };
 };
