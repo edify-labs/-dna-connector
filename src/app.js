@@ -27,7 +27,8 @@ app.use((err, req, res, next) => {
   if (!err) {
     return next();
   }
-
+  console.log('main app error');
+  console.log(err);
   switch (err.name) {
     case 'BadRequestError':
       return respond.withBadRequest(req, res, err.message);
