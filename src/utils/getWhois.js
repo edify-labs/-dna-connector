@@ -68,7 +68,7 @@ export default async function getWhois(isSandbox = false) {
   }
 
   console.log(tokenResponse.data);
-  const xmldoc = new DOMParser().parseFromString(str);
+  const xmldoc = new DOMParser().parseFromString(tokenResponse.data);
   const select = xpath.useNamespaces({ soap: 'http://schemas.xmlsoap.org/soap/envelope/' });
   const [envelope] = select('//soap:Envelope', xmldoc);
   if (!envelope?.lastChild?.childNodes?.[0]?.firstChild?.childNodes?.[0]?.data) {
