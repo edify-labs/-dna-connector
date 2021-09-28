@@ -60,6 +60,7 @@ export default async function query(req, res, next) {
     let contentType = 'application/json';
     if (requestJson) {
       useData = requestJson;
+      useData = JSON.stringify(useData);
     } else if (requestXml) {
       useData = requestXml;
       contentType = 'text/xml';
@@ -71,6 +72,10 @@ export default async function query(req, res, next) {
       } else if (useData.includes(mustache) && config.vars[variable]) {
         useData = useData.replace(mustache, config.vars[variable]);
       }
+    }
+
+    if (requestJson) {
+      useData = JSON.parse(useData);
     }
 
     const axiosConfig = {
