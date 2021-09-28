@@ -1,0 +1,33 @@
+{
+  "requestJson": {
+    "Input": {
+      "ExtensionRequests": null,
+      "Requests": [
+        {
+          "__type": "DatabaseHandshakeRequest:http://www.opensolutions.com/CoreApi",
+          "ParentRequestNumber": null,
+          "RequestNumber": null
+        }
+      ],
+      "UserAuthentication": {
+        "AccessTypeCode": null,
+        "AgreementTypeCode": null,
+        "ApplID": "{{dnaApplicationId}}",
+        "ApplNumber": 0,
+        "AuthorizationType": 3,
+        "CashBoxNumber": null,
+        "CustomerAccessNumber": null,
+        "EffectiveDate": null,
+        "Internationalization": null,
+        "LocationOrgNumber": null,
+        "NetworkNodeName": "{{dnaNetworkNodeName}}",
+        "PIN": null,
+        "Password": "{{dnaPassword}}",
+        "PhysicalAddress": null,
+        "PostDate": null,
+        "UsageCode": null,
+        "UserId": null
+      }
+    }
+  }
+}
