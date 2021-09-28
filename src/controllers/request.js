@@ -66,6 +66,7 @@ export default async function query(req, res, next) {
       contentType = 'text/xml';
     }
 
+    console.log('pre mustache data', useData);
     for (const [mustache, variable] of Object.entries(mustaches)) {
       if (variable === 'dnaPassword') {
         useData = useData.replace(mustache, whois);
@@ -74,6 +75,7 @@ export default async function query(req, res, next) {
       }
     }
 
+    console.log('post mustache data', useData);
     if (requestJson) {
       useData = JSON.parse(useData);
     }
