@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import https from 'https';
 import axios from 'axios';
-import { errors, respond, getSsoToken, createSoapRequest } from '../utils';
+import { errors, respond, createSoapRequest, getWhois } from '../utils';
 import { getConfig } from '../constants';
 
 const packagePath = path.join(`${__dirname}`, '..', '..', 'package.json');
@@ -10,21 +10,28 @@ const pjson = require(packagePath);
 
 export default async function query(req, res, next) {
   try {
-    let { request: dnaRequest } = req.body;
+    let { requestXml, requestJson } = req.body;
     const isSandbox = req.url.includes('/sandbox');
 
-    if (!dnaRequest) {
-      throw new errors.UnprocessableError('request is required');
+    if (!requestXml && !requestJson) {
+      throw new errors.UnprocessableError('requestXml or requestJson is required');
     }
 
-    let token;
+    let whois;
     try {
-      token = await getSsoToken(isSandbox);
+      whois = await getWhois(isSandbox);
     } catch (e) {
+      console.log(e);
       const eJSON = e.toJSON ? e.toJSON() : {};
-      const status = e.message?.includes('connectTimeout') ? 408 : 500;
+      let status;
+      if (e?.response?.status) {
+        status = e.response.status;
+      } else {
+        status = e.message?.includes('connectTimeout') ? 408 : 500;
+      }
+
       return res.status(status).json({
-        message: 'Error executing request',
+        message: 'Error executing request (error getting whois)',
         error: {
           message: e.message,
           stack: e.stack,
@@ -38,13 +45,12 @@ export default async function query(req, res, next) {
       });
     }
 
-    if (!token) {
-      throw new errors.InternalError('Error fetching sso token');
+    if (!whois) {
+      throw new errors.InternalError('Error fetching whois');
     }
 
     const config = getConfig(isSandbox);
     const mustaches = {
-      // '{{dnaUserId}}': 'dnaUserId',
       '{{dnaPassword}}': 'dnaPassword',
       '{{dnaApplicationId}}': 'dnaApplicationId',
       '{{dnaNetworkNodeName}}': 'dnaNetworkNodeName',
@@ -52,19 +58,27 @@ export default async function query(req, res, next) {
 
     for (const [mustache, variable] of Object.entries(mustaches)) {
       if (variable === 'dnaPassword') {
-        dnaRequest = dnaRequest.replace(mustache, token);
+        dnaRequest = dnaRequest.replace(mustache, whois);
       } else if (dnaRequest.includes(mustache) && config.vars[variable]) {
         dnaRequest = dnaRequest.replace(mustache, config.vars[variable]);
       }
     }
 
-    const data = createSoapRequest(dnaRequest);
     const axiosConfig = {
       url: config.url,
-      data,
       headers: { 'Content-Type': 'application/xml' },
       method: 'post',
     };
+
+    let contentType = 'application/json';
+    if (requestJson) {
+      axiosConfig.data = requestJson;
+    } else if (requestXml) {
+      axiosConfig.data = requestXml;
+      contentType = 'text/xml';
+    }
+
+    axiosConfig.headers = { 'Content-Type': contentType };
 
     const ca = fs.readFileSync(config.ca);
     const cert = fs.readFileSync(config.cert);
@@ -78,8 +92,15 @@ export default async function query(req, res, next) {
     try {
       response = await axios(axiosConfig);
     } catch (error) {
+      console.log(error);
       const eJSON = error.toJSON ? error.toJSON() : {};
-      const status = error.message?.includes('connectTimeout') ? 408 : 500;
+      let status;
+      if (e?.response?.status) {
+        status = e.response.status;
+      } else {
+        status = e.message?.includes('connectTimeout') ? 408 : 500;
+      }
+
       const envKeys = Object.keys(process.env).filter((k) => k.includes('DNA_'));
       return res.status(status).json({
         message: 'Error executing request',
