@@ -49,6 +49,7 @@ export default async function query(req, res, next) {
       throw new errors.InternalError('Error fetching whois');
     }
 
+    console.log(whois);
     const config = getConfig(isSandbox);
     const mustaches = {
       '{{dnaPassword}}': 'dnaPassword',
@@ -104,10 +105,10 @@ export default async function query(req, res, next) {
       console.log(error);
       const eJSON = error.toJSON ? error.toJSON() : {};
       let status;
-      if (e?.response?.status) {
-        status = e.response.status;
+      if (error?.response?.status) {
+        status = error.response.status;
       } else {
-        status = e.message?.includes('connectTimeout') ? 408 : 500;
+        status = error.message?.includes('connectTimeout') ? 408 : 500;
       }
 
       const envKeys = Object.keys(process.env).filter((k) => k.includes('DNA_'));
@@ -126,7 +127,7 @@ export default async function query(req, res, next) {
         dnaKeys: envKeys,
         version: pjson.version,
         sentData: dnaRequest,
-        responseData: e.response?.data || {},
+        responseData: error.response?.data || {},
       });
     }
 
