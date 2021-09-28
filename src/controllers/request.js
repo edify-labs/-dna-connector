@@ -56,30 +56,31 @@ export default async function query(req, res, next) {
       '{{dnaNetworkNodeName}}': 'dnaNetworkNodeName',
     };
 
+    let useData;
+    let contentType = 'application/json';
+    if (requestJson) {
+      useData = requestJson;
+    } else if (requestXml) {
+      useData = requestXml;
+      contentType = 'text/xml';
+    }
+
     for (const [mustache, variable] of Object.entries(mustaches)) {
       if (variable === 'dnaPassword') {
-        dnaRequest = dnaRequest.replace(mustache, whois);
-      } else if (dnaRequest.includes(mustache) && config.vars[variable]) {
-        dnaRequest = dnaRequest.replace(mustache, config.vars[variable]);
+        useData = useData.replace(mustache, whois);
+      } else if (useData.includes(mustache) && config.vars[variable]) {
+        useData = useData.replace(mustache, config.vars[variable]);
       }
     }
 
     const axiosConfig = {
       url: config.url,
-      headers: { 'Content-Type': 'application/xml' },
+      headers: { 'Content-Type': contentType },
       method: 'post',
+      data: useData,
     };
 
-    let contentType = 'application/json';
-    if (requestJson) {
-      axiosConfig.data = requestJson;
-    } else if (requestXml) {
-      axiosConfig.data = requestXml;
-      contentType = 'text/xml';
-    }
-
-    axiosConfig.headers = { 'Content-Type': contentType };
-
+    console.log('REQUEST DATA\n------------\n', useData);
     const ca = fs.readFileSync(config.ca);
     const cert = fs.readFileSync(config.cert);
     if (config.ca && config.cert) {
