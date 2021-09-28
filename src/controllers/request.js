@@ -69,6 +69,7 @@ export default async function query(req, res, next) {
     console.log('pre mustache data', useData);
     for (const [mustache, variable] of Object.entries(mustaches)) {
       if (variable === 'dnaPassword') {
+        whois = whois.replace(/"/g, '\\"');
         useData = useData.replace(mustache, whois);
       } else if (useData.includes(mustache) && config.vars[variable]) {
         useData = useData.replace(mustache, config.vars[variable]);
