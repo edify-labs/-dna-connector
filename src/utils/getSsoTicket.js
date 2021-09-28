@@ -6,7 +6,6 @@ import https from 'https';
 import { randomBytes } from 'crypto';
 import { DOMParser } from 'xmldom';
 import { getConfig } from '../constants';
-import { writeToErrorFile } from '.';
 
 export default async function getSsoTicket(isSandbox = false) {
   const xsd = moment().format('YYYY-MM-DDTHH:mm:ss.SSSSSSSZ');
@@ -29,16 +28,6 @@ export default async function getSsoTicket(isSandbox = false) {
         </open:DirectSignon>
      </soapenv:Body>
   </soapenv:Envelope>`;
-  writeToErrorFile(
-    JSON.stringify(
-      {
-        data: xmlBody,
-        config,
-      },
-      null,
-      2,
-    ),
-  );
 
   const axiosConfig = {
     url: `${config.urls.saf}`,
@@ -63,7 +52,6 @@ export default async function getSsoTicket(isSandbox = false) {
     throw new Error('Error fetching token (no response data)');
   }
 
-  console.log(tokenResponse.data);
   const xmldoc = new DOMParser().parseFromString(tokenResponse.data);
   const select = xpath.useNamespaces({ soap: 'http://schemas.xmlsoap.org/soap/envelope/' });
   const [envelope] = select('//soap:Envelope', xmldoc);

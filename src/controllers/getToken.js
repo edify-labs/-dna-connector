@@ -1,5 +1,5 @@
 import path from 'path';
-import { getWhois, writeToErrorFile } from '../utils';
+import { getWhois } from '../utils';
 
 const packagePath = path.join(`${__dirname}`, '..', '..', 'package.json');
 const pjson = require(packagePath);
@@ -12,18 +12,6 @@ export default async function getToken(req, res, next) {
   } catch (e) {
     console.log(e);
     const eJSON = e.toJSON ? e.toJSON() : {};
-    let write = eJSON && Object.keys(eJSON).length ? eJSON : e;
-    if (e.response?.data && Object.keys(write).length) {
-      write.responseData = e.response.data;
-      write = JSON.stringify(write, null, 2);
-    } else if (e.message && e.stack) {
-      write = { message: e.message, stack: e.stack };
-      write = JSON.stringify(write, null, 2);
-    } else if (typeof write === 'object' && Object.keys(write).length) {
-      write = JSON.stringify(write, null, 2);
-    }
-
-    writeToErrorFile(write);
     let status;
     if (e?.response?.status) {
       status = e.response.status;

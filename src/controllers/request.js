@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import https from 'https';
 import axios from 'axios';
-import { errors, respond, createSoapRequest, getWhois } from '../utils';
+import { errors, respond, getWhois } from '../utils';
 import { getConfig } from '../constants';
 
 const packagePath = path.join(`${__dirname}`, '..', '..', 'package.json');
@@ -49,7 +49,6 @@ export default async function query(req, res, next) {
       throw new errors.InternalError('Error fetching whois');
     }
 
-    console.log(whois);
     const config = getConfig(isSandbox);
     const mustaches = {
       '{{dnaPassword}}': 'dnaPassword',
@@ -78,7 +77,6 @@ export default async function query(req, res, next) {
       }
     }
 
-    console.log('post mustache data', useData);
     if (requestJson) {
       useData = JSON.parse(useData);
     }

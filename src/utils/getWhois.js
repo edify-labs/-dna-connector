@@ -6,7 +6,7 @@ import https from 'https';
 import { randomBytes } from 'crypto';
 import { DOMParser } from 'xmldom';
 import { getConfig } from '../constants';
-import { writeToErrorFile, getSsoTicket } from '.';
+import { getSsoTicket } from '.';
 
 let existingWhois;
 
@@ -19,7 +19,7 @@ export default async function getWhois(isSandbox = false) {
   const xsd = moment().format('YYYY-MM-DDTHH:mm:ss.SSSSSSSZ');
   const trackingId = randomBytes(8).toString('hex');
   const config = getConfig(isSandbox);
-  console.log(`SSO TICKET\n------------------\n${ssoTicket}`);
+
   const xmlBody = `<?xml version="1.0" encoding="utf-8"?>
   <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:open="http://www.opensolutions.com/">
      <soapenv:Header/>
@@ -33,16 +33,6 @@ export default async function getWhois(isSandbox = false) {
         </open:WhoIs>
      </soapenv:Body>
   </soapenv:Envelope>`;
-  writeToErrorFile(
-    JSON.stringify(
-      {
-        data: xmlBody,
-        config,
-      },
-      null,
-      2,
-    ),
-  );
 
   const axiosConfig = {
     url: `${config.urls.saf}`,
