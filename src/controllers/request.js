@@ -88,7 +88,7 @@ export default async function query(req, res, next) {
       data: useData,
     };
 
-    console.log('REQUEST DATA\n------------\n', useData);
+    console.log('REQUEST DATA\n------------\n', JSON.stringify(useData));
     const ca = fs.readFileSync(config.ca);
     const cert = fs.readFileSync(config.cert);
     if (config.ca && config.cert) {
@@ -130,7 +130,11 @@ export default async function query(req, res, next) {
       });
     }
 
-    return respond.withOk(req, res, { response: response.data, version: pjson.version });
+    return respond.withOk(req, res, {
+      response: response.data,
+      version: pjson.version,
+      sentData: useData,
+    });
   } catch (error) {
     return next(error);
   }
