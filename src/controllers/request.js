@@ -10,75 +10,80 @@ const pjson = require(packagePath);
 
 export default async function query(req, res, next) {
   try {
-    let { requestXml, requestJson } = req.body;
+    let { requestXml, requestJson, rawRequest } = req.body;
     const isSandbox = req.url.includes('/sandbox');
 
-    if (!requestXml && !requestJson) {
-      throw new errors.UnprocessableError('requestXml or requestJson is required');
+    if (!requestXml && !requestJson && !rawRequest) {
+      throw new errors.UnprocessableError('requestXml or requestJson or rawRequest is required');
     }
-
-    let whois;
-    try {
-      whois = await getWhois(isSandbox);
-    } catch (e) {
-      console.log(e);
-      const eJSON = e.toJSON ? e.toJSON() : {};
-      let status;
-      if (e?.response?.status) {
-        status = e.response.status;
-      } else {
-        status = e.message?.includes('connectTimeout') ? 408 : 500;
-      }
-
-      return res.status(status).json({
-        message: 'Error executing request (error getting whois)',
-        error: {
-          message: e.message,
-          stack: e.stack,
-          jsonMessage: eJSON.message || e.message,
-          jsonStack: eJSON.stack || e.stack,
-          jsonCode: eJSON.code || 'no code',
-        },
-        version: pjson.version,
-        requestConfig: eJSON && eJSON.config && eJSON.config.data ? eJSON.config.data : 'no data',
-        responseData: e.response?.data || {},
-      });
-    }
-
-    if (!whois) {
-      throw new errors.InternalError('Error fetching whois');
-    }
-
-    const config = getConfig(isSandbox);
-    const mustaches = {
-      '{{dnaPassword}}': 'dnaPassword',
-      '{{dnaApplicationId}}': 'dnaApplicationId',
-      '{{dnaNetworkNodeName}}': 'dnaNetworkNodeName',
-    };
 
     let useData;
     let contentType = 'application/json';
     let useUrl = config.urls.coreJson;
-    if (requestJson) {
-      useData = JSON.stringify(requestJson);
-    } else if (requestXml) {
-      useData = requestXml;
-      contentType = 'text/xml';
-      useUrl = config.urls.coreSoap;
-    }
+    if (!rawRequest) {
+      let whois;
+      try {
+        whois = await getWhois(isSandbox);
+      } catch (e) {
+        console.log(e);
+        const eJSON = e.toJSON ? e.toJSON() : {};
+        let status;
+        if (e?.response?.status) {
+          status = e.response.status;
+        } else {
+          status = e.message?.includes('connectTimeout') ? 408 : 500;
+        }
 
-    console.log('pre mustache data', useData);
-    for (const [mustache, variable] of Object.entries(mustaches)) {
-      if (variable === 'dnaPassword') {
-        whois = whois.replace(/"/g, '\\"');
-        useData = useData.replace(mustache, whois);
-      } else if (useData.includes(mustache) && config.vars[variable]) {
-        useData = useData.replace(mustache, config.vars[variable]);
+        return res.status(status).json({
+          message: 'Error executing request (error getting whois)',
+          error: {
+            message: e.message,
+            stack: e.stack,
+            jsonMessage: eJSON.message || e.message,
+            jsonStack: eJSON.stack || e.stack,
+            jsonCode: eJSON.code || 'no code',
+          },
+          version: pjson.version,
+          requestConfig: eJSON && eJSON.config && eJSON.config.data ? eJSON.config.data : 'no data',
+          responseData: e.response?.data || {},
+        });
       }
-    }
 
-    if (requestJson) {
-      useData = JSON.parse(useData);
+      if (!whois) {
+        throw new errors.InternalError('Error fetching whois');
+      }
+
+      const config = getConfig(isSandbox);
+      const mustaches = {
+        '{{dnaPassword}}': 'dnaPassword',
+        '{{dnaApplicationId}}': 'dnaApplicationId',
+        '{{dnaNetworkNodeName}}': 'dnaNetworkNodeName',
+      };
+
+      if (requestJson) {
+        useData = JSON.stringify(requestJson);
+      } else if (requestXml) {
+        useData = requestXml;
+        contentType = 'text/xml';
+        useUrl = config.urls.coreSoap;
+      }
+
+      console.log('pre mustache data', useData);
+      for (const [mustache, variable] of Object.entries(mustaches)) {
+        if (variable === 'dnaPassword') {
+          whois = whois.replace(/"/g, '\\"');
+          useData = useData.replace(mustache, whois);
+        } else if (useData.includes(mustache) && config.vars[variable]) {
+          useData = useData.replace(mustache, config.vars[variable]);
+        }
+      }
+
+      if (requestJson) {
+        useData = JSON.parse(useData);
+      }
+    } else {
+      console.log('run from raw request');
+      useData = rawRequest;
     }
 
     const axiosConfig = {
