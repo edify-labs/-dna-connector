@@ -70,9 +70,9 @@ export default async function query(req, res, next) {
 
       console.log('pre mustache data', useData);
       for (const [mustache, variable] of Object.entries(mustaches)) {
-        if (variable === 'dnaPassword') {
+        if (variable === 'dnaPassword' && !requestJson) {
           console.log('pre replace', whois);
-          whois = whois.replace(/"/g, '\\"');
+          // whois = whois.replace(/"/g, '\\"');
           console.log('post replace', whois);
           useData = useData.replace(mustache, whois);
         } else if (useData.includes(mustache) && config.vars[variable]) {
@@ -82,6 +82,9 @@ export default async function query(req, res, next) {
 
       if (requestJson) {
         useData = JSON.parse(useData);
+        if (useData?.Input?.UserAuthentication?.Password) {
+          useData = useData.Input.UserAuthentication.Password = whois;
+        }
       }
     } else {
       console.log('run from raw request');
