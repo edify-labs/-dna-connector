@@ -19,8 +19,8 @@ export default async function query(req, res, next) {
 
     let useData;
     let contentType = 'application/json';
-    let useUrl = config.urls.coreJson;
     const config = getConfig(isSandbox);
+    let useUrl = config.urls.coreJson;
     if (!rawRequest) {
       let whois;
       try {
