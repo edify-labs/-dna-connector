@@ -98,6 +98,7 @@ export default async function query(req, res, next) {
       data: useData,
     };
 
+    console.log(JSON.stringify(axiosConfig));
     console.log('REQUEST DATA\n------------\n', JSON.stringify(useData));
     const ca = fs.readFileSync(config.ca);
     const cert = fs.readFileSync(config.cert);
