@@ -20,6 +20,7 @@ export default async function query(req, res, next) {
     let useData;
     let contentType = 'application/json';
     let useUrl = config.urls.coreJson;
+    const config = getConfig(isSandbox);
     if (!rawRequest) {
       let whois;
       try {
@@ -53,7 +54,6 @@ export default async function query(req, res, next) {
         throw new errors.InternalError('Error fetching whois');
       }
 
-      const config = getConfig(isSandbox);
       const mustaches = {
         '{{dnaPassword}}': 'dnaPassword',
         '{{dnaApplicationId}}': 'dnaApplicationId',
