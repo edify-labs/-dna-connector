@@ -83,7 +83,7 @@ export default async function query(req, res, next) {
       if (requestJson) {
         useData = JSON.parse(useData);
         if (useData?.Input?.UserAuthentication?.Password) {
-          useData = useData.Input.UserAuthentication.Password = whois;
+          useData.Input.UserAuthentication.Password = whois;
         }
       }
     } else {
