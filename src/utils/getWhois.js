@@ -12,6 +12,7 @@ let existingWhois;
 
 export default async function getWhois(isSandbox = false) {
   if (existingWhois) {
+    console.log('return from cache', existingWhois);
     return existingWhois;
   }
 
@@ -78,6 +79,7 @@ export default async function getWhois(isSandbox = false) {
     '',
   );
 
+  console.log('set whois', existingWhois);
   // // tokens last for 24h
   // // clear out after 23h for some leeway
   setTimeout(() => {
